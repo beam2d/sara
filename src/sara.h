@@ -1,3 +1,6 @@
+// Copyright (c) 2011 Seiya Tokui <beam.web@gmail.com>. All Rights Reserved.
+// This source code is distributed under MIT License in LICENSE file.
+
 #ifndef SARA_SARA_H_
 #define SARA_SARA_H_
 
@@ -152,4 +155,4 @@ std::vector<index_t> make(const String& s, int ch_max) {
 
 }  // namespace sara
 
-#endif  // SARA_SAIS_H_
+#endif  // SARA_SARA_H_
