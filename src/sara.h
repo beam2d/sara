@@ -149,11 +149,10 @@ void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
   induce_sa(s, t, buckets, sa);
 }
 
-template <typename String>
-std::vector<typename boost::range_difference<String>::type>
-make(const String& s, int ch_max) {
-  std::vector<typename boost::range_difference<String>::type>
-      sa(boost::size(s));
+template <typename String, typename SArray = std::vector<
+                             typename boost::range_difference<String>::type>>
+SArray make(const String& s, int ch_max) {
+  SArray sa(boost::size(s));
   make(boost::begin(s), sa.begin(), boost::size(s), ch_max);
   return sa;
 }
