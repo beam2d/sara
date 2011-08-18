@@ -53,7 +53,7 @@ void induce_sa(const String& s,
 }
 
 // Constructs suffix array by induced sorting.
-// [s_begin, ..., s_begin + n) must not contain elements greater than |ch_end|.
+// [s_begin, ..., s_begin + n) must not contain elements greater than |ch_max|.
 template <typename CharIter, typename IndexIter>
 void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
   typedef typename std::make_unsigned<
@@ -117,10 +117,10 @@ void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
   const int num_names = cur_name + 1;
   std::remove_if(boost::rbegin(sa), boost::rbegin(sa) + (n - num_lms),
                  [](index_t idx) { return idx < 0; });
+  auto s1 = sa | boost::adaptors::sliced(n - num_lms, n);
 
   // Recurse if LMS-substrings are not unique, otherwise generate SA1 directly
   // from S1
-  auto s1 = sa | boost::adaptors::sliced(n - num_lms, n);
   if (num_names < num_lms) {
     make(s1.begin(), sa_begin, num_lms, num_names);
   } else {
@@ -130,7 +130,7 @@ void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
   }
 
   // Induce SA from SA1
-  auto p1 = s1;
+  auto p1 = s1;  // reuse the space for efficiency
   boost::remove_copy_if(boost::irange(1, n), p1.begin(), is_not_lms);
   for (int i = 0; i < num_lms; ++i) {
     sa[i] = p1[sa[i]];
