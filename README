@@ -45,6 +45,7 @@ auto sa = sara::make(input, UCHAR_MAX);
 -- バイナリデータなら上のように UCHAR_MAX でよい
 
 - src/sara_main.cc は cin を input として接尾辞配列を cout に出力するサンプル
+-- http://github.com/beam2d/elog が必要です
 
 
 ==============================================================================
