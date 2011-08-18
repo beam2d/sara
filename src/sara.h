@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <type_traits>
 #include <vector>
 #include <boost/range.hpp>
@@ -20,19 +21,19 @@
 
 namespace sara {
 
-typedef std::ptrdiff_t index_t;
-
 // Induced sorting
 template <typename String, typename Indexes>
 void induce_sa(const String& s,
                const std::vector<bool>& t,
-               const std::vector<index_t>& buckets,
+               const std::vector<
+                 typename boost::range_difference<String>::type>& buckets,
                Indexes& sa) {
   typedef typename std::make_unsigned<
     typename std::decay<decltype(s[0])>::type>::type ch_type;
 
   // sort L-type indexes
-  std::vector<index_t> poss(buckets.begin(), buckets.end() - 1);
+  std::vector<typename boost::range_difference<String>::type>
+      poss(buckets.begin(), buckets.end() - 1);
 
   auto back_idx = boost::size(s) - 1;
   sa[poss[ch_type(s[back_idx])]++] = back_idx;  // sentinel
@@ -57,8 +58,8 @@ void induce_sa(const String& s,
 template <typename CharIter, typename IndexIter>
 void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
   typedef typename std::make_unsigned<
-    typename std::decay<decltype(*s_begin)>::type>::type ch_type;
-  const int ch_end = ch_max + 1;
+    typename std::iterator_traits<CharIter>::value_type>::type ch_type;
+  typedef typename std::iterator_traits<CharIter>::difference_type index_type;
 
   auto sa = boost::make_iterator_range(sa_begin, sa_begin + n);
   auto s = boost::make_iterator_range(s_begin, s_begin + n);
@@ -71,10 +72,12 @@ void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
                                 : ch_type(s[i - 1]) < ch_type(s[i]);
   }
 
-  auto is_not_lms = [&t](index_t i) { return !(i > 0 && t[i] && !t[i - 1]); };
+  auto is_not_lms = [&t](index_type i) {
+    return !(i > 0 && t[i] && !t[i - 1]);
+  };
 
   // Create buckets
-  std::vector<index_t> buckets(ch_end + 1);
+  std::vector<index_type> buckets(ch_max + 2);
   for (ch_type ch : s) {
     ++buckets[ch + 1];
   }
@@ -116,7 +119,7 @@ void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
   }
   const int num_names = cur_name + 1;
   std::remove_if(boost::rbegin(sa), boost::rbegin(sa) + (n - num_lms),
-                 [](index_t idx) { return idx < 0; });
+                 [](index_type idx) { return idx < 0; });
   auto s1 = sa | boost::adaptors::sliced(n - num_lms, n);
 
   // Recurse if LMS-substrings are not unique, otherwise generate SA1 directly
@@ -147,8 +150,10 @@ void make(CharIter s_begin, IndexIter sa_begin, int n, int ch_max) {
 }
 
 template <typename String>
-std::vector<index_t> make(const String& s, int ch_max) {
-  std::vector<index_t> sa(boost::size(s));
+std::vector<typename boost::range_difference<String>::type>
+make(const String& s, int ch_max) {
+  std::vector<typename boost::range_difference<String>::type>
+      sa(boost::size(s));
   make(boost::begin(s), sa.begin(), boost::size(s), ch_max);
   return sa;
 }

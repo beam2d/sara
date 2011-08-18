@@ -3,12 +3,10 @@
 
 #include <climits>
 #include <algorithm>
-#include <functional>
 #include <iostream>
 #include <string>
-#include <boost/range.hpp>
-#include <boost/range/adaptors.hpp>
-#include <boost/range/algorithm.hpp>
+#include <vector>
+#include <boost/range/algorithm/copy.hpp>
 #include <boost/range/irange.hpp>
 #include <elog/benchmark.h>
 #include "sara.h"
@@ -26,8 +24,8 @@ void check(const string& str, size_t i, size_t j) {
   }
 }
 
-vector<ptrdiff_t> naive_make(const string& s) {
-  vector<ptrdiff_t> sa(s.size());
+vector<string::difference_type> naive_make(const string& s) {
+  vector<string::difference_type> sa(s.size());
   boost::copy(boost::irange(0UL, s.size()), sa.begin());
 
   std::sort(sa.begin(), sa.end(),
@@ -43,7 +41,7 @@ int main() {
     input += '\n';
   }
 
-  vector<sara::index_t> sa;
+  vector<string::difference_type> sa;
 
   BENCHMARK(sara_all) {
     sa = sara::make(input, UCHAR_MAX);
