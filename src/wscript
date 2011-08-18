@@ -1,0 +1,9 @@
+def build(bld):
+  bld.install_files('${PREFIX}/include/sara', bld.path.ant_glob('*.h'))
+
+  bld.program(source = 'sara_main.cc',
+              target = 'sara')
+  
+  bld.program(features = 'gtest',
+              source = 'sara_test.cc',
+              target = 'sara_test')
