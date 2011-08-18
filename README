@@ -1,0 +1,54 @@
+Copyright (c) 2011 Seiya Tokui <beam.web@gmail.com>. All Rights Reserved.
+
+sara.h は接尾辞配列を作るための小さなヘッダーです．
+
+"Linear Suffix Array Construction by Almost Pure Induced-Sorting"
+Nong, G., Zhang, S. and Chan, W. Data Compression Conference, 2009.
+
+にある SA-IS アルゴリズムを実装したものです．
+これは Induced Sorting を使って接尾辞配列を高速かつ省メモリで構築する手法です．
+日本語での解説が
+
+http://d.hatena.ne.jp/echizen_tm/20100325/1269533804
+http://topcoder.g.hatena.ne.jp/iwiwi/20110720/1311168147
+http://d.hatena.ne.jp/xxxxxeeeee/20110810/1312996441
+
+あたりにあります．
+講義のレポート用に作ったものなので，テスト等は不十分だと思われます．
+別の論文
+
+"Two Efficient Algorithms for Linear Suffix Array Construction"
+(同著者)
+
+に載っている C のソースコードを C++ に焼き直しただけに近いですが，
+せっかく書いたので公開します．
+
+==============================================================================
+つかいかたの例
+
+g++4.6.1 (-std=gnu++0x) と Boost.Range 2.0 が必要です．
+
+std::string input;
+// ... input に元の文字列いれる
+
+auto sa = sara::make(input, UCHAR_MAX);
+// sa に接尾辞配列が入る
+
+==============================================================================
+注意とメモ
+
+- input には整数値を取る RandomAccessRange を入れられる
+-- e.g.) char[N], wstring, vector<char>, deque<int>, etc.
+- 文字は符号付き整数であっても符号なしにキャストして扱う
+- make(input, ch_max) の ch_max に文字の最大値を入れる
+-- 文字集合として必ず整数の区間 [0, ch_max] を使う
+-- バイナリデータなら上のように UCHAR_MAX でよい
+
+- src/sara_main.cc は cin を input として接尾辞配列を cout に出力するサンプル
+
+
+==============================================================================
+ライセンス
+
+MIT LICENSE の下で配布します．
+see LICENSE file.
